@@ -1,0 +1,161 @@
+---
+title: "The Sprawl Paradox: Redefining American Urbanity (5,000 PPSM Threshold)"
+author: "Gemini CLI Research Assistant"
+date: today
+format:
+  html:
+    toc: true
+    theme: journal
+    self-contained: true
+execute:
+  echo: false
+  warning: false
+---
+
+## Abstract
+
+US city population rankings are historically determined by arbitrary political boundaries, many of which were expanded through 20th-century consolidations (e.g., Indianapolis, Columbus, Louisville). These boundaries often include vast tracts of low-density suburban sprawl, creating a "Sprawl Paradox" where cities with millions of residents are functionally less urban than smaller, denser neighbors. This paper re-evaluates US city rankings using the **True Urban Density** threshold of **5,000 people per square mile (ppsm)**, the Census standard for urban areas. We find that even at this more inclusive threshold, traditional rankings shift significantly, revealing the "suburban" nature of many high-ranking US municipalities.
+
+---
+
+## I. Methodology: The 5k Threshold
+
+We redefine a "City" based on functional urban density. We set the threshold at **5,000 people per square mile**. 
+
+*   **Rationale:** 5,000 ppsm is the U.S. Census Bureau's baseline for an area to be considered "Urbanized." It typically represents neighborhoods with continuous built-up fabric, including small-lot single-family homes, duplexes, and local commercial corridors.
+*   **Data:** We analyze 2022 ACS 5-Year Estimates at the Census Tract level for the top 50 metropolitan regions.
+
+---
+
+## II. Case Study: Mapping the Top 10 Metropolitan Cores
+
+The following interactive map visualizes the **True Urban Core (Red)** compared to the **Official Municipal Boundaries (Blue)** for the top 10 metropolitan areas. 
+
+```{r}
+#| label: national-urban-map
+#| message: false
+#| warning: false
+
+library(tidyverse)
+library(sf)
+library(leaflet)
+
+# Load Density Data (Top 50 filtered previously)
+pop <- read_delim("raw_census/B01003_top50.dat", delim = "|", col_names = FALSE, show_col_types = FALSE)
+housing <- read_delim("raw_census/B25001_top50.dat", delim = "|", col_names = FALSE, show_col_types = FALSE)
+
+density_df <- pop %>%
+  inner_join(housing, by = "X1") %>%
+  select(GEOID = X1, Population = X2.x, Housing_Units = X2.y) %>%
+  mutate(GEOID = str_remove(GEOID, "1400000US"))
+
+# Load Shapefiles for Top 10 States
+states <- c("39", "21", "25", "17", "36", "34", "06", "04", "12", "26", "48", "53", "39", "21")
+
+load_state_data <- function(st_code, density_df) {
+  t_path <- paste0("shp/", st_code, "_tracts/tl_2022_", st_code, "_tract.shp")
+  p_path <- paste0("shp/", st_code, "_places/tl_2022_", st_code, "_place.shp")
+  
+  if (file.exists(t_path)) {
+    t <- st_read(t_path, quiet = TRUE) %>% st_transform(4326)
+    p <- st_read(p_path, quiet = TRUE) %>% st_transform(4326)
+    
+    t_urban <- t %>%
+      inner_join(density_df, by = "GEOID") %>%
+      mutate(
+        ALAND_SQMI = as.numeric(ALAND) / 2589988,
+        Pop_Density = as.numeric(Population) / ALAND_SQMI,
+        is_true_urban = Pop_Density >= 5000
+      ) %>%
+      filter(is_true_urban)
+      
+    return(list(tracts = t_urban, places = p))
+  }
+  return(NULL)
+}
+
+all_data <- map(states, ~load_state_data(.x, density_df))
+# Remove NULLs
+all_data <- all_data[!map_lgl(all_data, is.null)]
+
+all_tracts <- do.call(rbind, map(all_data, ~.x$tracts))
+
+# Filter for Top 10 Major City Boundaries + Cincinnati
+top_city_names <- c("Cincinnati", "Indianapolis", "Columbus", "Louisville", 
+                    "Chicago", "Boston", "San Francisco", "Los Angeles", 
+                    "Phoenix", "Houston", "Seattle", "Miami", "Detroit", "Covington", "Newport")
+
+all_places <- do.call(rbind, map(all_data, ~.x$places)) %>%
+  filter(NAME %in% top_city_names)
+
+# Log the cities found for debugging
+message("Cities found in shapefiles: ", paste(unique(all_places$NAME), collapse=", "))
+
+leaflet() %>%
+  addProviderTiles(providers$CartoDB.Positron) %>%
+  addPolygons(data = all_places, color = "blue", weight = 1.5, fill = FALSE, 
+              label = ~NAME, group = "Official City Limits") %>%
+  addPolygons(data = all_tracts, fillColor = "red", fillOpacity = 0.4, weight = 0.1, color = "red",
+              group = "True Urban (5k+ ppsm)") %>%
+  addLayersControl(overlayGroups = c("Official City Limits", "True Urban (5k+ ppsm)"),
+                   options = layersControlOptions(collapsed = FALSE)) %>%
+  setView(lng = -84.5120, lat = 39.1031, zoom = 10) # Zoom in closer on Cincinnati
+```
+
+---
+
+## III. The Great Re-ranking (5,000 PPSM Threshold)
+
+When we set the bar at 5,000 ppsm, we observe which "mega-cities" are actually vast suburban networks.
+
+```{r}
+#| label: ranking-table-5k
+#| message: false
+#| warning: false
+
+library(knitr)
+library(kableExtra)
+
+results_path <- "urban_reranking_5k_results.csv"
+
+if (file.exists(results_path)) {
+  df <- read_csv(results_path) %>%
+    arrange(True_Urban_Rank)
+  
+  # Ensure Cincinnati is in the printed table for the user
+  top_10 <- df %>% head(10)
+  cincy <- df %>% filter(Region == "Cincinnati")
+  df_to_show <- bind_rows(top_10, cincy) %>% distinct()
+  
+  df_to_show %>%
+    select(
+      Region,
+      `Urban Pop (5k+)` = True_Urban_Pop_5k,
+      `Official Region Pop` = Official_Region_Pop,
+      Urbanicity_Index,
+      `Rank Delta` = Rank_Delta
+    ) %>%
+    mutate(
+      `Urban Pop (5k+)` = format(round(`Urban Pop (5k+)`), big.mark = ","),
+      `Official Region Pop` = format(round(`Official Region Pop`), big.mark = ","),
+      `Urbanicity Index` = paste0(round(Urbanicity_Index * 100, 1), "%"),
+      `Rank Delta` = ifelse(`Rank Delta` > 0, paste0("+", `Rank Delta`), as.character(`Rank Delta`))
+    ) %>%
+    select(-Urbanicity_Index) %>%
+    kable(booktabs = TRUE, align = "lcccc") %>%
+    kable_styling(bootstrap_options = c("striped", "hover"))
+}
+```
+
+---
+
+## IV. Conclusion
+
+Even at the more lenient 5,000 ppsm threshold, the "Sprawl Paradox" persists. Cities like **Indianapolis** and **Louisville** remain significantly less urbanized than their coastal counterparts. This analysis suggests that US city rankings are fundamentally flawed as a measure of urban significance, as they prioritize administrative reach over actual population intensity.
+
+---
+
+## V. References
+
+*   **U.S. Census Bureau (2022).** *American Community Survey 5-Year Estimates.*
+*   **Glaeser, E. L. (2011).** *Triumph of the City.* Penguin Press.

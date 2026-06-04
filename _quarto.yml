@@ -1,0 +1,17 @@
+project:
+  type: website
+  output-dir: docs
+
+website:
+  title: "True Urban Ranking"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Main Paper
+      - href: URBAN_RERANKING_PAPER_5K.qmd
+        text: 5K Analysis
+
+format:
+  html:
+    theme: journal
+    toc: true
