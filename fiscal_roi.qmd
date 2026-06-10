@@ -1,0 +1,134 @@
+---
+title: "The Fiscal Cost of the Sprawl Paradox"
+subtitle: "Transportation Investment, Property Tax Productivity, and the Cross-Subsidy of Low-Density Land — OKI Region"
+author: "Benedict Leonardi"
+date: today
+execute:
+  echo: false
+  warning: false
+---
+
+## Overview
+
+If the True Urban Core framework exposes a measurement problem — official city populations overstating functional urban density — then this analysis exposes the downstream cost: federal transportation investment is systematically misallocated along the same fault line.
+
+The OKI region (the 8-county Ohio-Kentucky-Indiana area surrounding Cincinnati) offers an unusually clean test case. The Ohio River bisects a continuous urban fabric along a state boundary, creating the same official-vs.-actual boundary distortion examined in the main paper. Within this region, we can match tract-level fiscal productivity against tract-level federal infrastructure investment and ask: are the places generating the most public revenue receiving their proportional share of public spending?
+
+The answer is no — by a factor of roughly 17.
+
+---
+
+## Data and Methodology
+
+### Fiscal Productivity
+
+We estimate property tax productivity at the Census tract level using a revenue proxy:
+
+$$\text{Revenue}_{i} \approx \text{Median Home Value}_i \times \text{Housing Units}_i \times 0.0125$$
+
+This approximation applies a uniform 1.25% effective tax rate to the total estimated residential stock. It captures the relative fiscal productivity of tracts — the ratio of urban to sprawl productivity — rather than precise absolute figures.
+
+### Federal Investment
+
+Transportation investment is measured using federal award data from USASpending.gov, with awards geocoded to Census block groups and aggregated to tracts. We focus on DOT-sourced awards (CFDA prefixes 20.xxx) to isolate transportation-specific investment.
+
+### Density Classification
+
+Tracts are classified into three density tiers consistent with the TUC framework:
+
+| Tier | Density Threshold | Description |
+|------|-------------------|-------------|
+| Urban | ≥ 5,000 ppsm | Continuous built fabric; transit-viable |
+| Suburban | 1,000–5,000 ppsm | Mixed residential; auto-dependent |
+| Sprawl | < 1,000 ppsm | Low-density; high infrastructure-per-capita cost |
+
+---
+
+## Fiscal Productivity by Density Class
+
+```{r summary-table}
+library(tidyverse)
+library(scales)
+library(knitr)
+
+results <- read_csv("data/oki_roi_results.csv", show_col_types = FALSE) %>%
+  mutate(GEOID = str_pad(as.character(GEOID), 12, pad = "0"))
+summary <- read_csv("data/oki_roi_summary.csv", show_col_types = FALSE)
+
+summary %>%
+  kable(
+    digits = 2,
+    caption = "Fiscal and Investment Metrics by Density Tier (OKI Region, per acre)",
+    col.names = c("Density Tier", "Tracts", "Avg. Revenue/Acre", "Avg. Fed. Investment/Acre", "Avg. Maintenance Liability/Acre")
+  )
+```
+
+Urban tracts generate approximately **`r dollar(summary$Avg_Revenue_Per_Acre[3])`** per acre in estimated property tax revenue — nearly **17 times** the figure for sprawl-class tracts. Yet the federal investment ranking runs in the opposite direction: suburban tracts receive the most investment per acre, while urban tracts receive the least.
+
+This inversion is not coincidental. It reflects the structure of federal transportation programs, which historically fund lane-miles rather than people-per-acre. A highway interchange in a low-density suburb consumes more acreage — and therefore more federal dollars — than the same investment in urban infrastructure that serves a vastly larger population within the same footprint.
+
+---
+
+## Spatial Distribution of ROI
+
+```{r map}
+library(sf)
+library(leaflet)
+
+tracts <- st_read("data/oki_tracts.geojson", quiet = TRUE) %>%
+  mutate(GEOID = str_pad(as.character(GEOID), 12, pad = "0"))
+
+map_data <- tracts %>% inner_join(results, by = "GEOID")
+
+pal <- colorNumeric(palette = "YlOrRd", domain = map_data$Revenue_Per_Acre)
+
+leaflet(map_data) %>%
+  addProviderTiles(providers$CartoDB.Positron) %>%
+  addPolygons(
+    fillColor = ~pal(Revenue_Per_Acre),
+    weight = 1,
+    opacity = 1,
+    color = "white",
+    dashArray = "3",
+    fillOpacity = 0.7,
+    label = ~paste0(NAME, ": ", dollar(Revenue_Per_Acre), "/acre")
+  ) %>%
+  addLegend(
+    pal = pal, values = ~Revenue_Per_Acre,
+    opacity = 0.7,
+    title = "Property Tax Revenue / Acre",
+    position = "bottomright"
+  )
+```
+
+The spatial pattern is striking but unsurprising: the highest revenue-per-acre tracts cluster in the Cincinnati urban core, Covington, and Newport — precisely the area that the main paper identifies as functionally continuous urban fabric despite being split across official municipal and state boundaries. The lowest-productivity tracts radiate outward into the exurban counties that nonetheless represent large shares of the region's total road network.
+
+---
+
+## The Cross-Subsidy Structure
+
+The combined picture — high urban fiscal productivity, low urban infrastructure investment — implies a structural cross-subsidy flowing from dense cores to low-density peripheries. This is not unique to Cincinnati. It is the standard operating condition of American metropolitan public finance:
+
+1. Urban tracts generate the majority of the property tax base and, via agglomeration, drive the wage and sales tax base.
+2. Infrastructure programs are structured around vehicle-miles and lane-miles, which scale with land area rather than population density.
+3. Low-density development generates large maintenance liabilities — approximately **$10,000 per lane-mile annually** — that are partly offset by transfers from higher-productivity jurisdictions.
+
+The implication for the True Urban Core framework is direct: cities that score high on official population rankings but low on TUC-adjusted urbanicity (Indianapolis, Columbus, Phoenix) are extracting cross-subsidies from the dense regions they nominally outrank. The "Sprawl Paradox" in population measurement has an exact fiscal analog in transportation spending.
+
+---
+
+## Methodological Notes
+
+- Revenue estimates assume a uniform 1.25% effective tax rate. Actual rates vary substantially across Hamilton, Kenton, Campbell, and the five other OKI counties; the proxy is suitable for cross-sectional comparison within the region but not for absolute revenue projection.
+- Federal award geocoding maps point awards to the nearest road segment using Overture Maps data, then aggregates to Census geographies. Awards with county-level precision only are excluded.
+- Maintenance liability estimates follow AASHTO's standard $10,000/lane-mile/year figure, applied to total road mileage per block group from OpenStreetMap.
+
+---
+
+## References
+
+- Federal Highway Administration (2024). *Highway Statistics Series.*
+- USASpending.gov (2023). *Federal Award Data, DOT Transportation Programs.*
+- U.S. Census Bureau (2022). *American Community Survey 5-Year Estimates.*
+- Overture Maps Foundation (2025). *Roads Layer: Technical Documentation.*
+- Strong Towns (2021). *The Cost of Car Dependency.*

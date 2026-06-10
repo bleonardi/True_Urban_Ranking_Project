@@ -3,15 +3,23 @@ project:
   output-dir: docs
 
 website:
-  title: "True Urban Ranking"
+  title: "The Sprawl Paradox"
   navbar:
     left:
       - href: index.qmd
-        text: Main Paper
+        text: "10K Analysis"
       - href: URBAN_RERANKING_PAPER_5K.qmd
-        text: 5K Analysis
+        text: "5K Analysis"
+      - href: fiscal_roi.qmd
+        text: "Fiscal ROI"
 
 format:
   html:
     theme: flatly
     toc: true
+    toc-depth: 3
+    linestretch: 1.6
+    code-fold: true
+    highlight-style: github
+    df-print: kable
+    page-layout: article
