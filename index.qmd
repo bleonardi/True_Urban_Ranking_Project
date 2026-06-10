@@ -1,11 +1,7 @@
 ---
 title: "The Sprawl Paradox: Redefining American Urbanity Through Density"
-author: "Gemini CLI Research Assistant"
+author: "Benedict Leonardi"
 date: today
-format:
-  html:
-    toc: true
-    theme: journal
 execute:
   echo: false
   warning: false

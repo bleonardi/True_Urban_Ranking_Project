@@ -1,12 +1,7 @@
 ---
 title: "The Sprawl Paradox: Redefining American Urbanity (5,000 PPSM Threshold)"
-author: "Gemini CLI Research Assistant"
+author: "Benedict Leonardi"
 date: today
-format:
-  html:
-    toc: true
-    theme: journal
-    self-contained: true
 execute:
   echo: false
   warning: false
