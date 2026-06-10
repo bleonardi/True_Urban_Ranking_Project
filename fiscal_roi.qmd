@@ -6,7 +6,6 @@ date: today
 execute:
   echo: false
   warning: false
-  eval: false
 ---
 
 ## Overview
@@ -52,15 +51,16 @@ library(tidyverse)
 library(scales)
 library(knitr)
 
-results <- read_csv("data/oki_roi_results.csv", show_col_types = FALSE) %>%
+roi_dir <- "../Transportation_ROI_Analysis/data"
+results <- read_csv(file.path(roi_dir, "oki_roi_results.csv"), show_col_types = FALSE) %>%
   mutate(GEOID = str_pad(as.character(GEOID), 12, pad = "0"))
-summary <- read_csv("data/oki_roi_summary.csv", show_col_types = FALSE)
+summary <- read_csv(file.path(roi_dir, "oki_roi_summary.csv"), show_col_types = FALSE)
 
 summary %>%
   kable(
     digits = 2,
     caption = "Fiscal and Investment Metrics by Density Tier (OKI Region, per acre)",
-    col.names = c("Density Tier", "Tracts", "Avg. Revenue/Acre", "Avg. Fed. Investment/Acre", "Avg. Maintenance Liability/Acre")
+    col.names = c("Density Tier", "Tracts", "Avg. Revenue/Acre", "Avg. Fed. Investment/Acre", "Avg. Maintenance Liability/Acre", "Net Fiscal Impact/Acre")
   )
 ```
 
@@ -76,7 +76,7 @@ This inversion is not coincidental. It reflects the structure of federal transpo
 library(sf)
 library(leaflet)
 
-tracts <- st_read("data/oki_tracts.geojson", quiet = TRUE) %>%
+tracts <- st_read(file.path(roi_dir, "oki_tracts.geojson"), quiet = TRUE) %>%
   mutate(GEOID = str_pad(as.character(GEOID), 12, pad = "0"))
 
 map_data <- tracts %>% inner_join(results, by = "GEOID")
