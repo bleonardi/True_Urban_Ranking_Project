@@ -13,5 +13,5 @@ website:
 
 format:
   html:
-    theme: journal
+    theme: flatly
     toc: true
