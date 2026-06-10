@@ -6,6 +6,7 @@ date: today
 execute:
   echo: false
   warning: false
+  eval: false
 ---
 
 ## Overview
@@ -63,7 +64,7 @@ summary %>%
   )
 ```
 
-Urban tracts generate approximately **`r dollar(summary$Avg_Revenue_Per_Acre[3])`** per acre in estimated property tax revenue — nearly **17 times** the figure for sprawl-class tracts. Yet the federal investment ranking runs in the opposite direction: suburban tracts receive the most investment per acre, while urban tracts receive the least.
+Urban tracts generate approximately **17 times** more estimated property tax revenue per acre than sprawl-class tracts. Yet the federal investment ranking runs in the opposite direction: suburban tracts receive the most investment per acre, while urban tracts receive the least.
 
 This inversion is not coincidental. It reflects the structure of federal transportation programs, which historically fund lane-miles rather than people-per-acre. A highway interchange in a low-density suburb consumes more acreage — and therefore more federal dollars — than the same investment in urban infrastructure that serves a vastly larger population within the same footprint.
 
