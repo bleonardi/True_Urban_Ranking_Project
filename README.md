@@ -1,20 +1,24 @@
-# True Urban Ranking: Redefining Density via the 10k Threshold
+# The Sprawl Paradox
+
+**Live site:** https://bleonardi.github.io/True_Urban_Ranking_Project/
 
 ## Overview
-This project challenges traditional US city population rankings, which are often skewed by arbitrary political boundaries. It introduces the **True Urban Core (TUC)** metric: the contiguous population within Census Tracts exceeding 10,000 people per square mile (ppsm).
 
-## Key Data Science Skills
-*   **Geospatial Aggregation:** Summing population data based on density thresholds rather than municipal borders.
-*   **Policy Analysis:** Evaluating how 20th-century consolidations (e.g., Indianapolis, Louisville) mask true urban intensity.
-*   **Data Visualization:** Mapping "True Urban Density" using leaflet and sf in R.
+See the [project page](https://bleonardi.github.io/True_Urban_Ranking_Project/) for full writeup, methods, and results.
 
-## Tech Stack
-*   **R (sf, leaflet, tidyverse):** Geospatial analysis and mapping.
-*   **Quarto:** Interactive research documentation.
-*   **US Census API:** Leveraging ACS 5-Year Estimates.
+**Methods:** Spatial econometrics, density measurement, Census tract analysis  
+**Stack:** R  
+**Author:** [Benedict Leonardi](https://bleonardi.github.io)
 
-## Data Sources
-*   **US Census Bureau:** [2022 ACS 5-Year Estimates via Tidycensus](https://data.census.gov/)
+## Structure
 
-## Key Insight
-When applying a consistent 10k ppsm threshold, "mega-cities" like Phoenix drop significantly in ranking, while physically constrained hubs like Boston and San Francisco emerge as the nation's true urban heavyweights.
+```
+_quarto.yml      # site config
+index.qmd        # main analysis / overview
+assets/          # custom.scss theme
+docs/            # rendered HTML (GitHub Pages)
+```
+
+---
+
+Part of [bleonardi.github.io](https://bleonardi.github.io) — research in urban economics, institutional analysis, and quantitative social science.

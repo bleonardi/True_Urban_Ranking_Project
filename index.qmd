@@ -166,3 +166,8 @@ The TUC metric provides a consistent, theoretically grounded alternative. Its ap
 - Pushkarev, B., & Zupan, J. M. (1977). *Public Transportation and Land Use Policy.* Indiana University Press.
 - Glaeser, E. L. (2011). *Triumph of the City.* Penguin Press.
 - Albouy, D., & Ehrlich, G. (2018). Housing productivity and the social cost of land-use restrictions. *Journal of Urban Economics,* 107, 101–120.
+
+
+---
+
+*[View source on GitHub](https://github.com/bleonardi/True_Urban_Ranking_Project){target="_blank"}*
