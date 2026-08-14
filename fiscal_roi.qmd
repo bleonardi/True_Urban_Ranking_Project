@@ -10,23 +10,13 @@ execute:
 
 ## Overview
 
-If the True Urban Core framework exposes a measurement problem — official city populations overstating functional urban density — then this analysis exposes the downstream cost: federal transportation investment is systematically misallocated along the same fault line.
-
-The OKI region (the 8-county Ohio-Kentucky-Indiana area surrounding Cincinnati) offers an unusually clean test case. The Ohio River bisects a continuous urban fabric along a state boundary, creating the same official-vs.-actual boundary distortion examined in the main paper. Within this region, we can match tract-level fiscal productivity against tract-level federal infrastructure investment and ask: are the places generating the most public revenue receiving their proportional share of public spending?
-
-The answer is no — by a factor of roughly 17.
-
 ---
 
 ## Data and Methodology
 
 ### Fiscal Productivity
 
-We estimate property tax productivity at the Census tract level using a revenue proxy:
-
 $$\text{Revenue}_{i} \approx \text{Median Home Value}_i \times \text{Housing Units}_i \times 0.0125$$
-
-This approximation applies a uniform 1.25% effective tax rate to the total estimated residential stock. It captures the relative fiscal productivity of tracts — the ratio of urban to sprawl productivity — rather than precise absolute figures.
 
 ### Federal Investment
 
@@ -64,10 +54,6 @@ summary %>%
   )
 ```
 
-Urban tracts generate approximately **17 times** more estimated property tax revenue per acre than sprawl-class tracts. Yet the federal investment ranking runs in the opposite direction: suburban tracts receive the most investment per acre, while urban tracts receive the least.
-
-This inversion is not coincidental. It reflects the structure of federal transportation programs, which historically fund lane-miles rather than people-per-acre. A highway interchange in a low-density suburb consumes more acreage — and therefore more federal dollars — than the same investment in urban infrastructure that serves a vastly larger population within the same footprint.
-
 ---
 
 ## Spatial Distribution of ROI
@@ -102,19 +88,9 @@ leaflet(map_data) %>%
   )
 ```
 
-The spatial pattern is striking but unsurprising: the highest revenue-per-acre tracts cluster in the Cincinnati urban core, Covington, and Newport — precisely the area that the main paper identifies as functionally continuous urban fabric despite being split across official municipal and state boundaries. The lowest-productivity tracts radiate outward into the exurban counties that nonetheless represent large shares of the region's total road network.
-
 ---
 
 ## The Cross-Subsidy Structure
-
-The combined picture — high urban fiscal productivity, low urban infrastructure investment — implies a structural cross-subsidy flowing from dense cores to low-density peripheries. This is not unique to Cincinnati. It is the standard operating condition of American metropolitan public finance:
-
-1. Urban tracts generate the majority of the property tax base and, via agglomeration, drive the wage and sales tax base.
-2. Infrastructure programs are structured around vehicle-miles and lane-miles, which scale with land area rather than population density.
-3. Low-density development generates large maintenance liabilities — approximately **$10,000 per lane-mile annually** — that are partly offset by transfers from higher-productivity jurisdictions.
-
-The implication for the True Urban Core framework is direct: cities that score high on official population rankings but low on TUC-adjusted urbanicity (Indianapolis, Columbus, Phoenix) are extracting cross-subsidies from the dense regions they nominally outrank. The "Sprawl Paradox" in population measurement has an exact fiscal analog in transportation spending.
 
 ---
 

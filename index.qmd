@@ -9,39 +9,19 @@ execute:
 
 ## Abstract
 
-US city population rankings are artifacts of 20th-century boundary consolidations, not measures of urban intensity. Indianapolis, Columbus, and Louisville absorbed their suburbs wholesale; Boston and San Francisco could not. The result is a ranking system that rewards administrative reach over actual density. This analysis introduces the **True Urban Core (TUC)** — the contiguous population residing in Census tracts exceeding 10,000 persons per square mile, the threshold associated with transit viability and walkable neighborhood services. When applied uniformly, TUC reranking is dramatic: Phoenix, Indianapolis, and Louisville collapse; Boston, San Francisco, and Washington D.C. rise to the top tier. The analysis also decomposes the "consolidation premium" — the share of a city's official population attributable to absorbed low-density territory — across all 100 largest MSAs.
-
 ---
 
 ## I. The Problem: When Boundaries Lie
 
-In the United States, a "City" is a political entity, not a geographic one. Cities like **Indianapolis (361 sq mi)** and **Louisville (380 sq mi)** captured entire counties under a single population count through 20th-century city-county consolidations. Conversely, cities like **Boston (48 sq mi)** and **San Francisco (46 sq mi)** are physically constrained by geography and failed consolidation attempts.
-
-This creates a ranking system that rewards sprawl over intensity. Columbus, OH (pop. ~900k) officially outranks San Francisco (~800k), despite SF having nearly five times the population density. From a policy standpoint, this matters: transit funding, housing grants, and infrastructure investment often scale with official city population — allocating resources on the basis of a measurement that systematically undercounts genuine urban density and overcounts suburban sprawl.
-
-The TUC framework is a corrective. By anchoring the definition of "urban" in density rather than administrative history, it provides a consistent, reproducible basis for comparing cities across different political geographies.
-
 ---
 
 ## II. Methodology: The 10,000 ppsm Threshold
-
-We define the True Urban Core as **the contiguous population residing in Census tracts exceeding 10,000 persons per square mile (ppsm)**.
-
-The 10,000 ppsm threshold is grounded in the urban economics literature (Pushkarev & Zupan 1977) as the minimum density at which frequent mass transit becomes financially viable and walkable commercial corridors can support themselves. It corresponds roughly to a tight grid of mid-rise residential buildings — the neighborhood texture of Boston's Back Bay, San Francisco's Mission District, or Manhattan south of 96th Street.
-
-**Data:** 2022 ACS 5-Year Estimates at the Census tract level. Population density is calculated as tract population divided by land area in square miles. Tracts meeting the threshold are included in the TUC; official city population benchmarks are sourced from Census place-level estimates.
 
 The [5K Analysis](URBAN_RERANKING_PAPER_5K.html) page applies the same methodology at the 5,000 ppsm threshold — the Census Bureau's standard definition of "urbanized" — for comparison.
 
 ---
 
 ## III. Case Study: The Cincinnati–NKY Urban Continuity
-
-The discrepancy between political boundaries and urban reality is most visible in river-crossing metropolitan areas. In the Cincinnati region, the "City" officially stops at the Ohio River. But the urban fabric continues seamlessly into Covington and Newport, Kentucky — neighborhoods that share Cincinnati's street grid, building types, and commuting patterns but fall in a different state, county, and for transit purposes, a different agency jurisdiction.
-
-Simultaneously, large portions of the official "Cincinnati" boundary in the north and west contain lower-density residential areas that function as suburbs by every meaningful metric. They are in the city on paper; they are not in the urban core in practice.
-
-The map below illustrates this directly: red shading marks the True Urban Core (tracts ≥ 10,000 ppsm or ≥ 4,000 housing units per sq mi); blue outlines show official municipal limits.
 
 ```{r}
 #| label: urban-map
@@ -94,13 +74,11 @@ leaflet() %>%
   setView(lng = -84.5120, lat = 39.1031, zoom = 12)
 ```
 
-The Ohio River boundary severs a functionally unified urban area into two jurisdictions with separate transit agencies, separate tax bases, and separate political representation — a fragmentation whose costs are documented separately in the [Transit Fragmentation](https://bleonardi.github.io/Transit_Fragmentation_Research/) research.
+See also the [Transit Fragmentation](https://bleonardi.github.io/Transit_Fragmentation_Research/) research.
 
 ---
 
 ## IV. The Great Re-ranking
-
-When we strip away low-density territory and count only True Urban residents, the hierarchy of American cities shifts dramatically.
 
 ```{r}
 #| label: ranking-table
@@ -140,23 +118,15 @@ if (file.exists(results_path)) {
 
 ### The Consolidation Mirage
 
-Cities like **Indianapolis** and **Louisville** exhibit urbanicity indices below 2% — fewer than 2 in 100 residents live in a neighborhood with urban-level density. Their national rankings are statistical artifacts of administrative consolidation, not evidence of urban vitality. From a policy standpoint, directing transit investment, housing policy, or agglomeration-premium analysis to these cities on the basis of their official populations systematically misallocates resources.
-
 ### The Density Powerhouses
-
-**Boston (+10)** and **San Francisco (+9)** show the largest rank gains. When sprawl is removed from the comparison, these cities reveal themselves as far more significant urban centers than their officially-larger neighbors in the South and Midwest. Their density is not a quirk of geography to be explained away — it is the feature.
 
 ### The Fiscal Implication
 
-The ranking distortion is not merely academic. Because federal transportation and housing programs often use official city or MSA population as a basis for formula allocations, cities with high consolidation premiums systematically receive infrastructure spending disproportionate to their actual urban density. The [Fiscal ROI analysis](fiscal_roi.html) documents this directly in the OKI region: urban tracts generate 17 times more property tax revenue per acre than sprawl tracts while receiving significantly less federal transportation investment per acre.
+See the [Fiscal ROI analysis](fiscal_roi.html).
 
 ---
 
 ## VI. Conclusion
-
-The True Urban Core reranking is not an argument against large cities. It is an argument for measuring what we claim to measure. When urban economists, transit planners, and housing researchers speak of "city population," they implicitly mean people living in conditions that generate urban externalities — density-dependent agglomeration, walkable access, transit viability. Official boundaries capture something else: the outcomes of 20th-century political negotiations over annexation and consolidation.
-
-The TUC metric provides a consistent, theoretically grounded alternative. Its application reveals that the United States has far fewer truly dense urban places than official rankings suggest, concentrated primarily on the Northeast corridor and Pacific Coast — and that the policy implications of this misclassification compound across transit funding, housing investment, and fiscal geography.
 
 ---
 
